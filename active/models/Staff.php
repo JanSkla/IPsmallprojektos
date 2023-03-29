@@ -154,9 +154,9 @@ class Staff
         //bool to 1/0
         $admin = $this->admin ? 1 : 0;
 
-        $query = "UPDATE ".self::DB_TABLE." SET `name` = :name, `surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `login` = :login, `password` = :password, `admin` = :admin WHERE `employee_id` = :employeeId";
+        $query = "UPDATE ".self::DB_TABLE." SET `name` = :name, `surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `admin` = :admin WHERE `employee_id` = :employeeId";
         $stmt = PDOProvider::get()->prepare($query);
-        $success = $stmt->execute(['name' => $this->name, 'surname' => $this->surname, 'job' => $this->job, 'wage' => $this->wage, 'room' => $this->room, 'login' => $this->login, 'password' => $this->password, 'admin' => $admin, 'employeeId' => $this->employee_id]);
+        $success = $stmt->execute(['name' => $this->name, 'surname' => $this->surname, 'job' => $this->job, 'wage' => $this->wage, 'room' => $this->room, 'admin' => $admin, 'employeeId' => $this->employee_id]);
         
         $query = "DELETE FROM `key` WHERE employee = :employeeId";
         $stmt = PDOProvider::get()->prepare($query);
@@ -230,13 +230,6 @@ class Staff
         if (!((string)$parsedRoom === $this->room))
             $errors['room'] = 'ID Místnosti musí být číslem';
 
-        if (!isset($this->login) || (!$this->login))
-            $errors['login'] = 'Login nesmí být prázdné';
-        
-        if (!isset($this->password) || (!$this->password))
-            $errors['password'] = 'Heslo nesmí být prázdné';
-
-
         var_dump($errors);
         return count($errors) === 0;
     }
@@ -262,17 +255,11 @@ class Staff
 
         $employee->room = filter_input(INPUT_POST, 'room');
 
-        $employee->login = filter_input(INPUT_POST, 'login');
-        if ($employee->login)
-            $employee->login = trim($employee->login);
-
         $employee->password = filter_input(INPUT_POST, 'password');
         if ($employee->password)
             $employee->password = trim($employee->password);
 
         $employee->admin = filter_input(INPUT_POST, 'admin', FILTER_VALIDATE_BOOLEAN);
-
-        $employee->password = filter_input(INPUT_POST, 'password');
 
         $query = "SELECT room_id FROM room";
         $stmt = PDOProvider::get()->prepare($query);
