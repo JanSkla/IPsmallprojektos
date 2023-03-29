@@ -121,7 +121,11 @@ class Room
     {
         $query = "DELETE FROM `".self::DB_TABLE."` WHERE `room_id` = :roomId";
         $stmt = PDOProvider::get()->prepare($query);
-        return $stmt->execute(['roomId'=>$roomId]);
+
+        try {
+            return $stmt->execute(['roomId'=>$roomId]);
+        }
+        catch(PDOException $e) {return false;}
     }
 
     public function validate(&$errors = []) : bool

@@ -5,6 +5,7 @@ class StaffCreatePage extends CRUDPage
 {
     private ?Staff $staff;
     private ?array $errors = [];
+    private ?array $rooms = [];
     private int $state;
 
     protected function prepare(): void
@@ -18,6 +19,9 @@ class StaffCreatePage extends CRUDPage
         {
             //jdi dál
             $this->staff = new Staff();
+            $stmt = PDOProvider::get()->prepare("SELECT room_id, `name`, `no` FROM room ORDER BY `no`");
+            $stmt->execute([]);
+            $this->rooms = $stmt->fetchAll();
         }
 
         //když poslal data
@@ -49,7 +53,8 @@ class StaffCreatePage extends CRUDPage
             'staffForm',
             [
                 'staff' => $this->staff,
-                'errors' => $this->errors
+                'errors' => $this->errors,
+                'rooms' => $this->rooms
             ]
         );
     }

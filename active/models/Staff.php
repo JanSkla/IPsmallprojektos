@@ -9,15 +9,16 @@ class Staff
     public ?int $employee_id;
     public ?string $name;
     public ?string $surname;
-    public ?int $room;
+    public $room;
     public ?string $job;
-    public ?int $wage;
+    public $wage;
     public ?string $login;
     public ?string $password;
     public ?bool $admin;
 
     public ?string $roomname;
     public ?string $phone;
+    public ?array $rooms = [];
 
     /**
      * @param int|null $employee_id
@@ -123,6 +124,25 @@ class Staff
             return false;
 
         $this->employee_id = PDOProvider::get()->lastInsertId();
+
+        //handle key update
+        $keyValues = [];
+
+        foreach ($this->rooms as $roomId => $isAssigned)
+        {
+            if($isAssigned)
+            {
+                $keyValues[] = "({$roomId}, {$this->employee_id})";
+            }
+        }
+
+        if ($keyValues)
+        {
+            $query = "INSERT INTO `key` (room, employee) VALUES ".implode(", ", $keyValues);
+            $stmt = PDOProvider::get()->prepare($query);
+            $stmt->execute([]);
+        }
+
         return true;
     }
 
@@ -136,7 +156,31 @@ class Staff
 
         $query = "UPDATE ".self::DB_TABLE." SET `name` = :name, `surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `login` = :login, `password` = :password, `admin` = :admin WHERE `employee_id` = :employeeId";
         $stmt = PDOProvider::get()->prepare($query);
-        return $stmt->execute(['name' => $this->name, 'surname' => $this->surname, 'job' => $this->job, 'wage' => $this->wage, 'room' => $this->room, 'login' => $this->login, 'password' => $this->password, 'admin' => $admin, 'employeeId' => $this->employee_id]);
+        $success = $stmt->execute(['name' => $this->name, 'surname' => $this->surname, 'job' => $this->job, 'wage' => $this->wage, 'room' => $this->room, 'login' => $this->login, 'password' => $this->password, 'admin' => $admin, 'employeeId' => $this->employee_id]);
+        
+        $query = "DELETE FROM `key` WHERE employee = :employeeId";
+        $stmt = PDOProvider::get()->prepare($query);
+        $stmt->execute(['employeeId' => $this->employee_id]);
+
+        //handle key update
+        $keyValues = [];
+
+        foreach ($this->rooms as $roomId => $isAssigned)
+        {
+            if($isAssigned)
+            {
+                $keyValues[] = "({$roomId}, {$this->employee_id})";
+            }
+        }
+
+        if ($keyValues)
+        {
+            $query = "INSERT INTO `key` (room, employee) VALUES ".implode(", ", $keyValues);
+            $stmt = PDOProvider::get()->prepare($query);
+            $stmt->execute([]);
+        }
+        
+        return $success;
     }
 
     public function delete() : bool
@@ -151,14 +195,49 @@ class Staff
         return $stmt->execute(['employeeId'=>$employeeId]);
     }
 
+    public static function getKeysById(int $employeeId) : array
+    {
+        $query = "SELECT r.room_id, r.name, r.no, SUM(k.employee = :employeeId) AS isChecked FROM room r LEFT JOIN `key` k ON r.room_id = k.room GROUP BY r.name ORDER BY r.no";
+        $stmt = PDOProvider::get()->prepare($query);
+        $stmt->execute(['employeeId'=>$employeeId]);
+
+        $rooms = $stmt->fetchAll();
+        return (array)$rooms;
+    }
+
     public function validate(&$errors = []) : bool
     {
         if (!isset($this->name) || (!$this->name))
             $errors['name'] = 'Jméno nesmí být prázdné';
         
         if (!isset($this->surname) || (!$this->surname))
-        $errors['surname'] = 'Příjmení nesmí být prázdné';
+            $errors['surname'] = 'Příjmení nesmí být prázdné';
 
+        if (!isset($this->job) || (!$this->job))
+            $errors['job'] = 'Pozice nesmí být prázdná';
+        
+        if (!isset($this->wage) || (!$this->wage))
+            $errors['wage'] = 'Plat nesmí být prázdné';
+        
+        $parsedWage = (int)$this->wage;
+        if (!((string)$parsedWage === $this->wage))
+            $errors['wage'] = 'Plat musí být číslem';
+
+        if (!isset($this->room) || (!$this->room))
+            $errors['room'] = 'ID Místnosti nesmí být prázdné';
+
+        $parsedRoom = (int)$this->room;
+        if (!((string)$parsedRoom === $this->room))
+            $errors['room'] = 'ID Místnosti musí být číslem';
+
+        if (!isset($this->login) || (!$this->login))
+            $errors['login'] = 'Login nesmí být prázdné';
+        
+        if (!isset($this->password) || (!$this->password))
+            $errors['password'] = 'Heslo nesmí být prázdné';
+
+
+        var_dump($errors);
         return count($errors) === 0;
     }
 
@@ -192,6 +271,18 @@ class Staff
             $employee->password = trim($employee->password);
 
         $employee->admin = filter_input(INPUT_POST, 'admin', FILTER_VALIDATE_BOOLEAN);
+
+        $employee->password = filter_input(INPUT_POST, 'password');
+
+        $query = "SELECT room_id FROM room";
+        $stmt = PDOProvider::get()->prepare($query);
+        $stmt->execute([]);
+
+        while ($roomId = $stmt->fetch())
+        {
+            $isAssigned = !!filter_input(INPUT_POST, 'rooms'.$roomId->room_id);
+            $employee->rooms[$roomId->room_id] = $isAssigned;
+        }
 
         return $employee;
     }

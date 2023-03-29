@@ -16,7 +16,7 @@ class RoomDeletePage extends CRUDPage
         $success = Room::deleteByID($roomId);
 
         //přesměruj
-        $this->redirect(self::ACTION_DELETE, $success);
+        $this->redirect(self::ACTION_DELETE, $success, "Místnost se váže na zaměstnance, odstraňte ho prvně.");
     }
 
     protected function pageBody()

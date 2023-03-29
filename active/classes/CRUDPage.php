@@ -9,11 +9,12 @@ abstract class CRUDPage extends BasePage
     public const ACTION_UPDATE = "update";
     public const ACTION_DELETE = "delete";
 
-    protected function redirect(string $action, bool $success) : void
+    protected function redirect(string $action, bool $success, string $error = null) : void
     {
         $data = [
             'action' => $action,
-            'success' => $success ? 1 : 0
+            'success' => $success ? 1 : 0,
+            'error' => $error
         ];
         header('Location: list.php?' . http_build_query($data) );
         exit;

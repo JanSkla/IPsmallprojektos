@@ -16,6 +16,7 @@ class RoomsPage extends CRUDPage
         //pokud přišel výsledek, zachytím ho
         $crudResult = filter_input(INPUT_GET, 'success', FILTER_VALIDATE_INT);
         $crudAction = filter_input(INPUT_GET, 'action');
+        $crudError = filter_input(INPUT_GET, 'error');
 
         if (is_int($crudResult)) {
             $this->alert = [
@@ -25,7 +26,7 @@ class RoomsPage extends CRUDPage
             $message = '';
             if ($crudResult === 0)
             {
-                $message = 'Operace nebyla úspěšná';
+                $message = 'Operace nebyla úspěšná'.($crudError ? ' [ '.$crudError.' ]':"");
             }
             else if ($crudAction === self::ACTION_DELETE)
             {
