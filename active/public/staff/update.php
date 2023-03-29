@@ -6,6 +6,7 @@ class StaffUpdatePage extends CRUDPage
     private ?Staff $staff;
     private ?array $errors = [];
     private ?array $rooms = [];
+    private ?Room $room;
     private int $state;
 
     protected function prepare(): void
@@ -27,8 +28,8 @@ class StaffUpdatePage extends CRUDPage
                 throw new NotFoundException();
             
             $this->rooms = Staff::getKeysById($staffId);
-            if (!$this->staff)
-                throw new NotFoundException();
+            
+            $this->room = Room::findByID($this->staff->room);
         }
 
         //když poslal data
@@ -61,7 +62,8 @@ class StaffUpdatePage extends CRUDPage
             [
                 'staff' => $this->staff,
                 'errors' => $this->errors,
-                'rooms' => $this->rooms
+                'rooms' => $this->rooms,
+                'room' => $this->room
             ]
         );
     }

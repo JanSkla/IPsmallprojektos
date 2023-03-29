@@ -62,7 +62,7 @@ class Staff
     }
 
     /**
-     * @return Room[]
+     * @return Staff[]
      */
     public static function getAll($sorting = []) : array
     {

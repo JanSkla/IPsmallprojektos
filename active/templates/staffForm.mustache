@@ -22,7 +22,16 @@
     </div>
     <div class="form-group">
         <label for="room">ID Místnosti</label>
-        <input type="text" class="form-control" id="room" name="room" value="{{staff.room}}" required>
+        <select name="room" id="room">
+            {{#room}}
+            <optgroup label="Current:">
+                <option value="{{room_id}}">{{name}} ({{no}})</option>
+            </optgroup>
+            {{/room}}
+            {{#rooms}}
+                <option value="{{room_id}}">{{name}} ({{no}})</option>
+            {{/rooms}}
+        </select>
         {{#errors.room}}<div class="d-block invalid-feedback">{{errors.room}}</div>{{/errors.room}}
     </div>
     <div class="form-group">
