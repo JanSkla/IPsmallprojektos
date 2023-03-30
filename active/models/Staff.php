@@ -205,7 +205,7 @@ class Staff
         return (array)$rooms;
     }
 
-    public function validate(&$errors = []) : bool
+    public function validate(&$errors = [], string $action = null) : bool
     {
         if (!isset($this->name) || (!$this->name))
             $errors['name'] = 'Jméno nesmí být prázdné';
@@ -230,11 +230,21 @@ class Staff
         if (!((string)$parsedRoom === $this->room))
             $errors['room'] = 'ID Místnosti musí být číslem';
 
+
+        if($action == CRUDPage::ACTION_INSERT)
+        {
+            if (!isset($this->login) || (!$this->login))
+                $errors['login'] = 'Login nesmí být prázdné';
+            
+            if (!isset($this->password) || (!$this->password))
+                $errors['password'] = 'Heslo nesmí být prázdné';
+        }
+
         var_dump($errors);
         return count($errors) === 0;
     }
 
-    public static function readPost() : self
+    public static function readPost(string $action = null) : self
     {
         $employee = new Staff();
         $employee->employee_id = filter_input(INPUT_POST, 'employee_id', FILTER_VALIDATE_INT);
@@ -269,6 +279,17 @@ class Staff
         {
             $isAssigned = !!filter_input(INPUT_POST, 'rooms'.$roomId->room_id);
             $employee->rooms[$roomId->room_id] = $isAssigned;
+        }
+
+        if($action == CRUDPage::ACTION_INSERT)
+        {
+            $employee->login = filter_input(INPUT_POST, 'login');
+            if ($employee->login)
+                $employee->login = trim($employee->login);
+
+            $employee->password = filter_input(INPUT_POST, 'password');
+            if ($employee->password)
+                $employee->password = trim($employee->password);
         }
 
         return $employee;

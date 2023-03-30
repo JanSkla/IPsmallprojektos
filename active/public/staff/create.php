@@ -27,11 +27,11 @@ class StaffCreatePage extends CRUDPage
         //když poslal data
         elseif($this->state === self::STATE_DATA_SENT) {
             //načti je
-            $this->staff = Staff::readPost();
+            $this->staff = Staff::readPost(self::ACTION_INSERT);
 
             //zkontroluj je, jinak formulář
             $this->errors = [];
-            $isOk = $this->staff->validate($this->errors);
+            $isOk = $this->staff->validate($this->errors, self::ACTION_INSERT);
             if (!$isOk)
             {
                 $this->state = self::STATE_FORM_REQUESTED;
@@ -54,7 +54,8 @@ class StaffCreatePage extends CRUDPage
             [
                 'staff' => $this->staff,
                 'errors' => $this->errors,
-                'rooms' => $this->rooms
+                'rooms' => $this->rooms,
+                'create' => true //TODO: Staff restore login and password addition for insert, also dobre rano doufam ze jsi se dobre vyspal <3
             ]
         );
     }
