@@ -6,6 +6,8 @@ class RoomDeletePage extends CRUDPage
 
     protected function prepare(): void
     {
+        BasePage::redirectIfNotLogged();
+
         parent::prepare();
 
         $roomId = filter_input(INPUT_POST, 'roomId', FILTER_VALIDATE_INT);

@@ -240,7 +240,6 @@ class Staff
                 $errors['password'] = 'Heslo nesmí být prázdné';
         }
 
-        var_dump($errors);
         return count($errors) === 0;
     }
 

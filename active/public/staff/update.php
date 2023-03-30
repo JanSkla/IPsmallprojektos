@@ -11,6 +11,8 @@ class StaffUpdatePage extends CRUDPage
 
     protected function prepare(): void
     {
+        BasePage::redirectIfNotLogged();
+        
         parent::prepare();
         $this->findState();
         $this->title = "Upravit místnost";

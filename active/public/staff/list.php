@@ -12,6 +12,8 @@ class StaffsPage extends CRUDPage
 
     protected function prepare(): void
     {
+        BasePage::redirectIfNotLogged();
+
         parent::prepare();
         //pokud přišel výsledek, zachytím ho
         $crudResult = filter_input(INPUT_GET, 'success', FILTER_VALIDATE_INT);

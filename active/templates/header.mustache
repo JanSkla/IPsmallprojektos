@@ -1,5 +1,9 @@
     <nav>
         <h1>Prohlížeč databáze zaměstnanců</h1>
+        {{#islogged}}
+            <a href="/logout">Odhlásit se</a>
+        {{/islogged}}
+        <hr/>
         <ul>
             <li><a href="/room/list.php">Místnosti</a></li>
             <li><a href="/staff/list.php">Lidé</a></li>

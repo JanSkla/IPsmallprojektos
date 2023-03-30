@@ -17,8 +17,10 @@ abstract class BasePage
 
     protected function pageHeader() : string
     {
+        $islogged = $_SESSION['loggedin'];
+
         $m = MustacheProvider::get();
-        return $m->render('header',[]);
+        return $m->render('header',[ 'islogged' => $islogged ]);
     }
 
     abstract protected function pageBody();
@@ -31,6 +33,7 @@ abstract class BasePage
 
     public function render() : void
     {
+        session_start();
         try
         {
             $this->prepare();
@@ -56,13 +59,21 @@ abstract class BasePage
 
         catch (Exception $e)
         {
-            //if (AppConfig::get('debug'))
+            if (AppConfig::get('debug'))
                 throw $e;
 
             $e = new BaseException("Server error", 500);
             $exceptionPage = new ExceptionPage($e);
             $exceptionPage->render();
             exit;
+        }
+    }
+    public static function redirectIfNotLogged()
+    {
+        //zkontroluje jestli je přihlášen
+        if(!$_SESSION['loggedin'])
+        {
+            header('Location: /login');
         }
     }
 }

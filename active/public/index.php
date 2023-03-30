@@ -10,7 +10,10 @@ class IndexPage extends BasePage
 
     protected function pageBody()
     {
-        return "Hello World!!!";
+        self::redirectIfNotLogged();
+        return MustacheProvider::get()->render(
+            'welcomePage'
+        );
     }
 
 }

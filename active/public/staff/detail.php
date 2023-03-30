@@ -9,6 +9,8 @@ class StaffDetailPage extends BasePage
 
     protected function prepare(): void
     {
+        BasePage::redirectIfNotLogged();
+        
         parent::prepare();
         //získat data z GET
         $employeeId = filter_input(INPUT_GET, 'employeeId', FILTER_VALIDATE_INT);

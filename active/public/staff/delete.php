@@ -5,6 +5,8 @@ class StaffDeletePage extends CRUDPage
 {
     protected function prepare(): void
     {
+        BasePage::redirectIfNotLogged();
+        
         parent::prepare();
 
         $employeeId = filter_input(INPUT_POST, 'employeeId', FILTER_VALIDATE_INT);

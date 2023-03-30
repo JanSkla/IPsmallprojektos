@@ -8,6 +8,8 @@ class RoomDetailPage extends BasePage
 
     protected function prepare(): void
     {
+        BasePage::redirectIfNotLogged();
+
         parent::prepare();
         //získat data z GET
         $roomId = filter_input(INPUT_GET, 'roomId', FILTER_VALIDATE_INT);
