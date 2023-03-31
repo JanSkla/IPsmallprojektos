@@ -13,7 +13,7 @@ pro spuštění je třeba do directory `active/config` přidat soubor `local-con
 ```
 popripade upravit v `config.js` pripojeni k databazi
 
-poté nainstalovat potřebné packages přes `composer update`
+poté nainstalovat potřebné packages přes `composer update` v directory `active`
 
 skrze wamp server by následně mělo být možné aplikaci spustit
 
