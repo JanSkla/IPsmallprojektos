@@ -7,6 +7,7 @@ class RoomDeletePage extends CRUDPage
     protected function prepare(): void
     {
         BasePage::redirectIfNotLogged();
+        BasePage::redirectIfNotAdmin();
 
         parent::prepare();
 

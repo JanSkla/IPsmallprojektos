@@ -6,36 +6,35 @@ class StaffUpdatePage extends CRUDPage
     private ?Staff $staff;
     private ?array $errors = [];
     private ?array $rooms = [];
-    private ?Room $room;
+    private ?Room $room = null;
     private int $state;
 
     protected function prepare(): void
     {
         BasePage::redirectIfNotLogged();
+        BasePage::redirectIfNotAdmin();
         
         parent::prepare();
         $this->findState();
         $this->title = "Upravit místnost";
 
-        //když chce formulář
-        if ($this->state === self::STATE_FORM_REQUESTED)
-        {
-            $staffId = filter_input(INPUT_GET, 'employeeId', FILTER_VALIDATE_INT);
-            if (!$staffId)
-                throw new BadRequestException();
+        $staffId = filter_input(INPUT_GET, 'employeeId', FILTER_VALIDATE_INT);
+        if (!$staffId)
+            throw new BadRequestException();
 
-            //jdi dál
-            $this->staff = Staff::findByID($staffId);
-            if (!$this->staff)
-                throw new NotFoundException();
-            
-            $this->rooms = Staff::getKeysById($staffId);
-            
-            $this->room = Room::findByID($this->staff->room);
-        }
+        //jdi dál
+        $this->staff = Staff::findByID($staffId);
+        if (!$this->staff)
+            throw new NotFoundException();
+        
+        $this->rooms = Staff::getKeysById($staffId);
+        
+        $this->room = Room::findByID($this->staff->room);
+        if (!$this->room)
+            throw new NotFoundException();
 
         //když poslal data
-        elseif($this->state === self::STATE_DATA_SENT) {
+        if($this->state === self::STATE_DATA_SENT) {
             //načti je
             $this->staff = Staff::readPost();
 

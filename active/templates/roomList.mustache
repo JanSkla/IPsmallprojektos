@@ -3,7 +3,9 @@
         <th>Name</th>
         <th>No.</th>
         <th>Phone</th>
+        {{#isadmin}}
         <th>Actions</th>
+        {{/isadmin}}
     </tr>
 
     {{#rooms}}
@@ -13,6 +15,7 @@
         </td>
         <td>{{no}}</td>
         <td>{{#phone}}{{phone}}{{/phone}}{{^phone}}&mdash;{{/phone}}</td>
+        {{#isadmin}}
         <td>
             <form action="update.php" method="get" style="display: inline-block">
                 <input type="hidden" name="roomId" value="{{room_id}}">
@@ -23,6 +26,7 @@
                 <input type="submit" value="Smazat" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat místnost?\nAkce je nevratná!');">
             </form>
         </td>
+        {{/isadmin}}
     </tr>
     {{/rooms}}
     {{^rooms}}
@@ -30,6 +34,7 @@
     {{/rooms}}
 
 </table>
-
+{{#isadmin}}
 <a href="create.php" class="btn btn-primary">Založit novou místnost</a>
+{{/isadmin}}
 

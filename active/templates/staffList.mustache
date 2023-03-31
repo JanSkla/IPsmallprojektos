@@ -5,18 +5,22 @@
         <th>Phone</th>
         <th>Position</th>
         <th>Permissions</th>
+        {{#isadmin}}
         <th>Actions</th>
+        {{/isadmin}}
     </tr>
 
     {{#staff}}
     <tr>
         <td>
-            <a href='detail.php?employeeId={{employee_id}}'>{{name}} {{surname}}</a>
+            <a href='detail.php?employeeId={{employee_id}}'>{{name}} {{surname}}</a>{{#isUser}} 
+            <span class="badge bg-success">Já</span>{{/isUser}}
         </td>
         <td>{{roomname}}</td>
         <td>{{#phone}}{{phone}}{{/phone}}{{^phone}}&mdash;{{/phone}}</td>
         <td>{{#job}}{{job}}{{/job}}{{^job}}&mdash;{{/job}}</td>
         <td>{{#admin}}Admin{{/admin}}{{^admin}}&mdash;{{/admin}}</td>
+        {{#isadmin}}
         <td>
             <form action="update.php" method="get" style="display: inline-block">
                 <input type="hidden" name="employeeId" value="{{employee_id}}">
@@ -24,9 +28,10 @@
             </form>
             <form action="delete.php" method="post" style="display: inline-block">
                 <input type="hidden" name="employeeId" value="{{employee_id}}">
-                <input type="submit" value="Smazat" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat místnost?\nAkce je nevratná!');">
+                {{^isUser}}<input type="submit" value="Smazat" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat zaměstnance?\nAkce je nevratná!');">{{/isUser}}
             </form>
         </td>
+        {{/isadmin}}
     </tr>
     {{/staff}}
     {{^staff}}
@@ -34,5 +39,6 @@
     {{/staff}}
  
 </table>
-
+{{#isadmin}}
 <a href="create.php" class="btn btn-primary">Založit nového zaměstnance</a>
+{{/isadmin}}

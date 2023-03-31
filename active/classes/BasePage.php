@@ -76,4 +76,12 @@ abstract class BasePage
             header('Location: /login');
         }
     }
+    public static function redirectIfNotAdmin()
+    {
+        //zkontroluje jestli je přihlášen
+        if(!$_SESSION['isAdmin'])
+        {
+            header('Location: /');
+        }
+    }
 }

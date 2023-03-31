@@ -14,11 +14,14 @@ class Staff
     public $wage;
     public ?string $login;
     public ?string $password;
+    public ?string $passwordConfirm;
     public ?bool $admin;
 
     public ?string $roomname;
     public ?string $phone;
     public ?array $rooms = [];
+
+    public ?bool $isUser = false;
 
     /**
      * @param int|null $employee_id
@@ -85,6 +88,7 @@ class Staff
         {
             $employee = new Staff();
             $employee->hydrate($employeeData);
+            $employee->isUser = ($_SESSION['userId'] == $employee->employee_id);
             $employees[] = $employee;
         }
 
@@ -119,7 +123,8 @@ class Staff
 
         $query = "INSERT INTO ".self::DB_TABLE." (`name`, `surname`, `job`, `wage`, `room`, `login`, `password`, `admin`) VALUES (:name, :surname, :job, :wage, :room, :login, :password, :admin)";
         $stmt = PDOProvider::get()->prepare($query);
-        $result = $stmt->execute(['name' => $this->name, 'surname' => $this->surname, 'job' => $this->job, 'wage' => $this->wage, 'room' => $this->room, 'login' => $this->login, 'password' => $this->password, 'admin' => $admin]);
+        $password = User::password_hash($this->password);
+        $result = $stmt->execute(['name' => $this->name, 'surname' => $this->surname, 'job' => $this->job, 'wage' => $this->wage, 'room' => $this->room, 'login' => $this->login, 'password' => $password, 'admin' => $admin]);
         if (!$result)
             return false;
 
@@ -179,6 +184,9 @@ class Staff
             $stmt = PDOProvider::get()->prepare($query);
             $stmt->execute([]);
         }
+
+        if($_SESSION['userId'] == $this->employee_id)
+            $_SESSION['isAdmin'] = $this->admin ;
         
         return $success;
     }
@@ -223,14 +231,6 @@ class Staff
         if (!((string)$parsedWage === $this->wage))
             $errors['wage'] = 'Plat musí být číslem';
 
-        if (!isset($this->room) || (!$this->room))
-            $errors['room'] = 'ID Místnosti nesmí být prázdné';
-
-        $parsedRoom = (int)$this->room;
-        if (!((string)$parsedRoom === $this->room))
-            $errors['room'] = 'ID Místnosti musí být číslem';
-
-
         if($action == CRUDPage::ACTION_INSERT)
         {
             if (!isset($this->login) || (!$this->login))
@@ -238,6 +238,9 @@ class Staff
             
             if (!isset($this->password) || (!$this->password))
                 $errors['password'] = 'Heslo nesmí být prázdné';
+            
+            if ($this->password != $this->passwordConfirm)
+                $errors['passwordConfirm'] = 'Hesla se neshodují';
         }
 
         return count($errors) === 0;
@@ -289,6 +292,10 @@ class Staff
             $employee->password = filter_input(INPUT_POST, 'password');
             if ($employee->password)
                 $employee->password = trim($employee->password);
+
+            $employee->passwordConfirm = filter_input(INPUT_POST, 'passwordConfirm');
+            if ($employee->passwordConfirm)
+                $employee->passwordConfirm = trim($employee->passwordConfirm);
         }
 
         return $employee;

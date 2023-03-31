@@ -60,7 +60,7 @@ class StaffsPage extends CRUDPage
         $staff = Staff::getAll(['name' => 'ASC']);
 
         //prezentovat data
-        $html .= MustacheProvider::get()->render('staffList',['staff' => $staff]);
+        $html .= MustacheProvider::get()->render('staffList',['staff' => $staff, 'isadmin' => $_SESSION['isAdmin']]);
 
         return $html;
     }

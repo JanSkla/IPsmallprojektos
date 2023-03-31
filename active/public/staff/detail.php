@@ -23,8 +23,8 @@ class StaffDetailPage extends BasePage
             throw new NotFoundException();
 
 
-        $stmt = PDOProvider::get()->prepare('SELECT r.name, r.room_id FROM room r
-        JOIN `key` k ON r.room_id = k.room AND k.employee = :employeeId');
+        $stmt = PDOProvider::get()->prepare('SELECT r.name, r.room_id, r.no FROM room r
+        JOIN `key` k ON r.room_id = k.room AND k.employee = :employeeId ORDER BY r.no');
         $stmt->execute(['employeeId' => $employeeId]);
         $this->keys = $stmt->fetchAll();
 

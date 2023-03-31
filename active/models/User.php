@@ -4,6 +4,8 @@
         public ?string $login;
         public ?string $password;
         public ?int $id;
+
+        public ?bool $isAdmin;
         public static function readPost() : self
         {
             $user = new User();
@@ -20,14 +22,15 @@
             if (!isset($this->password) || (!$this->password))
                 $errors['password'] = 'Heslo nesmí být prázdné';
 
-            $query = 'SELECT employee_id FROM employee WHERE login = "'.$this->login.'" AND password = "'.$this->password.'"';
+            $query = 'SELECT employee_id, `password`, `admin` FROM employee WHERE login = "'.$this->login.'"';
             $stmt = PDOProvider::get()->prepare($query);
             $stmt->execute([]);
             $result = $stmt->fetch();
 
             $this->id = $result->employee_id;
+            $this->isAdmin = !!$result->admin;
 
-            if(!isset($this->id)){
+            if(!password_verify($this->password, $result->password)){
                 $errors['isvalid'] = 'Uživatel s těmito údaji neexistuje';
             }
 
@@ -37,7 +40,11 @@
         {
             $_SESSION['loggedin'] = true;
             $_SESSION['userId'] = $this->id;
-            var_dump($_SESSION['userId']);
+            $_SESSION['isAdmin'] = $this->isAdmin;
+        }
+        public static function password_hash(string $password) : string
+        {
+            return password_hash($password, PASSWORD_DEFAULT);
         }
     }
 ?>

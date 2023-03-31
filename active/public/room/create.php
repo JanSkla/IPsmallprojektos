@@ -10,6 +10,7 @@ class RoomCreatePage extends CRUDPage
     protected function prepare(): void
     {
         BasePage::redirectIfNotLogged();
+        BasePage::redirectIfNotAdmin();
         
         parent::prepare();
         $this->findState();
