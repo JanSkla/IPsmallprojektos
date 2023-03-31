@@ -52,7 +52,8 @@ class RoomCreatePage extends CRUDPage
             'roomForm',
             [
                 'room' => $this->room,
-                'errors' => $this->errors
+                'errors' => $this->errors,
+                'create' => true
             ]
         );
     }

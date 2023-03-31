@@ -16,7 +16,7 @@ class StaffUpdatePage extends CRUDPage
         
         parent::prepare();
         $this->findState();
-        $this->title = "Upravit místnost";
+        $this->title = "Upravit zaměstnance";
 
         $staffId = filter_input(INPUT_GET, 'employeeId', FILTER_VALIDATE_INT);
         if (!$staffId)
