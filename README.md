@@ -11,7 +11,7 @@ pro spuštění je třeba do directory `active/config` přidat soubor `local-con
     }
 }
 ```
-popripade upravit v `confiig.js` pripojeni k databazi
+popripade upravit v `config.js` pripojeni k databazi
 
 poté nainstalovat potřebné packages přes `composer update`
 
