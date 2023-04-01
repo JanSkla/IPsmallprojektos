@@ -224,7 +224,7 @@ class Staff
         if (!isset($this->job) || (!$this->job))
             $errors['job'] = 'Pozice nesmí být prázdná';
         
-        if (!isset($this->wage) || (!$this->wage))
+        if (!isset($this->wage))
             $errors['wage'] = 'Plat nesmí být prázdné';
         
         $parsedWage = (int)$this->wage;
