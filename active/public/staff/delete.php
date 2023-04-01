@@ -15,7 +15,7 @@ class StaffDeletePage extends CRUDPage
             throw new BadRequestException();
         
         if($_SERVER['userId'] == $employeeId)
-            header('Location: /staff/list');
+            header('Location: /staff/list.php');
         
         //když poslal data
         $success = Staff::deleteByID($employeeId);

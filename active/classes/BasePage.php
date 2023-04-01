@@ -73,7 +73,7 @@ abstract class BasePage
         //zkontroluje jestli je přihlášen
         if(!$_SESSION['loggedin'])
         {
-            header('Location: /login');
+            header('Location: /login.php');
         }
     }
     public static function redirectIfNotAdmin()
